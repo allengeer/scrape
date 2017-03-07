@@ -10,11 +10,17 @@ func status(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w,"RUNNING")
 }
 func scraper(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, scrape.Scrape("http://www.drudgereport.com"))
+
+	url := r.URL.Query().Get("url")
+	if url == "" {
+		r.ParseForm()
+		url = r.FormValue("url")
+	}
+	fmt.Fprint(w, scrape.Scrape(url))
 }
 
 func main() {
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/scrape", scraper)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":5000", nil)
 }
